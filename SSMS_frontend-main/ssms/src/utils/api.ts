@@ -160,10 +160,12 @@ function normalizeProductImageUrl(imageUrl: string): string {
   }
 
   try {
-    const resolvedUrl = new URL(imageUrl, window.location.origin);
+    const apiOrigin = new URL(API_BASE_URL, window.location.origin).origin;
+    const mediaOrigin = API_USES_RELATIVE_PROXY ? window.location.origin : apiOrigin;
+    const resolvedUrl = new URL(imageUrl, mediaOrigin);
 
-    if (API_USES_RELATIVE_PROXY && resolvedUrl.pathname.startsWith("/media/")) {
-      return `${window.location.origin}${resolvedUrl.pathname}${resolvedUrl.search}${resolvedUrl.hash}`;
+    if (resolvedUrl.pathname.startsWith("/media/")) {
+      return `${mediaOrigin}${resolvedUrl.pathname}${resolvedUrl.search}${resolvedUrl.hash}`;
     }
 
     return resolvedUrl.toString();
